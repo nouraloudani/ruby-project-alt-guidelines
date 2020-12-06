@@ -1,3 +1,6 @@
+
+
+
 ### USER ###
 
 bill = User.create(username: "Billy", password: "abc123")
@@ -17,12 +20,11 @@ fresh = Vendor.create(name: "Fresh")
 
 ### ORDER ###
 
-order1 = Order.create(user_id: bill.id, date: "June 1", completed: true)
+order1 = Order.create(user_id: bill.id, date: "June 1", amount: 500, completed: true)
 order2 = Order.create(user_id: kate.id, date: "May 1", completed: true)
 order3 = Order.create(user_id: sarah.id, date: "Jan 1", completed: false)
-order4 = Order.create(user_id: bill.id, date: "July 3", completed: false)
+order4 = Order.create(user_id: bill.id, date: "July 3", amount: 300, completed: true)
 order5 = Order.create(user_id: mark.id, date: "March 3", completed: true)
-
 
 
 ### PRODUCT ###

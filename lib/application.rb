@@ -32,7 +32,7 @@ class Application
 
     # def main_menu
         # puts "You have logged in, here are you pending orders:"
-        
+        # pending_orders
         # if no orders, puts "you currently have no pending orders"
         # list options
             # "would you like to update or change and order?"

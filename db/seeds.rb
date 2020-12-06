@@ -45,4 +45,4 @@ end
     OrderProduct.create(product_id: desk.id, order_id: order3.id)
 end
 
-binding.pry
+# binding.pry

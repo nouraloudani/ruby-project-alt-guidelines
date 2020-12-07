@@ -2,17 +2,7 @@ class User < ActiveRecord::Base
 
    has_many :orders
 
-   # def self.pending_orders
-   #    orders.find_or_create_by(completed: false)
-   # end
-
-   # prompt user to choose something to do
-   # def self.main_menu
-      # puts "You have logged in, here are you pending orders:"
-      
-      # if no orders, puts "you currently have no pending orders"
-      # list options
-   # end
+   
 
    def self.login_a_user
       puts "Please enter your username:"
@@ -28,58 +18,95 @@ class User < ActiveRecord::Base
       end
    end
 
-   # create an order
-   # need argument of product to create OrderProduct
-   def create_order(order_date, product_name)
-      Order.create(user_id: self.id, date: order_date, amount: Product.find_by(name: product_name).price, completed: false)
+   # adding the registration helper
+   def self.register_a_user 
+      # have the user enter a username and a password 
+      # User.create(username, password) 
+      puts "Please enter a username:"
+      usern = gets.chomp
+      puts "Please enter a password:"
+      passw = gets.chomp
       
-      # use Order.last to create OrderProduct
-      OrderProduct.create(order_id: Order.last.id, product_id: Product.find_by(name: product_name).id)
-   end
+      user = User.find_by(username: usern)
 
-   # updates Order instance by changing attribute 'completed' to false
-   # destroy corresponding OrderProduct using order_id to identify
-   def confirm_order(order_id)
-      order = Order.find(order_id)
-      order.completed = true
-      order.save
-      op_to_cancel = OrderProduct.find_by(order_id: order_id)
-      op_to_cancel.destroy
-   end
-
-   def find_order_by_id(orderid)
-      Order.find(orderid)
-   end
-
-   # checks to see if Order.completed = false 
-   # --> if true, puts "Order has already been completed."
-   # --> if false, destroys Order and corresponding OrderProduct
-   ##### STILL NOT COMPLETED #####
-   def cancel_order(orderid)
-      order = find_order_by_id(15)
-      if order.completed = false
-         order.destroy
+      if user 
+         puts "Sorry, it seems like you are already registered. Please try to login."
       else
-         puts "Order has already been completed."
+         User.create(username: usern, password: passw)
       end
    end
 
-   # returns array of orders where attribute 'completed' = true
+   # create an order
+   def create_order
+      puts "What product would you like to order today?"
+      product_name = gets.chomp
+      # Product.find_by(name: product_name) ### if exists use as argument
+      # else puts "Sorry, that product is not avaialable"
+      order_date = Time.now.to_s
+      Order.create(user_id: self.id, date: order_date, amount: Product.find_by(name: product_name).price, completed: false)
+      
+      # use Order.last to create OrderProduct
+      OrderProduct.create(product_id: Product.find_by(name: product_name).id, order_id: Order.last.id)
+   end
+
+   # updates 'completed' to true, saves and destroys associated OrderProduct
+   def complete_order
+      order = Order.find_by(completed: false)
+      order.completed = true
+      order.save
+      op_to_cancel = OrderProduct.find_by(order_id: order.id)
+      op_to_cancel.destroy
+   end
+
+   # destroy pending Order and associated OrderProduct
+   def cancel_order
+      order = Order.find_by(completed: false)
+      order.destroy
+      op_to_cancel = OrderProduct.find_by(order_id: order.id)
+      op_to_cancel.destroy
+   end
+
+   # returns array of completed Orders
    def past_orders
       orders.where(completed: true)
    end
 
    # returns array of orders where attribute 'completed' = false
-   def pending_orders
+   def pending_order
       orders.where(completed: false)
    end
-
-   # returns the average amount spent with specific Vendor
+   
+   # returns average amount spent on all completed Orders
    def average_amount_per_order
       past_orders.sum(:amount)/past_orders.size
    end
 
-   # def amount_spent_per_vendor(vendor)
+   def add_product_to_order #add product order with a new product id.
+      puts "What product would you like to add?"
+      input = gets.chomp
+      product_inst = Product.find_by(name: input)
+      product_inst_id = product_inst.id
+      if self.pending_order.length > 0
+         OrderProduct.create(product_id: product_inst_id, order_id: Order.where(completed: false).id)
+      else
+         Order.create(user_id: self.id, date: Time.now.to_s, amount: Product.find_by(name: input).price, completed: false)
+         OrderProduct.create(product_id: product_inst_id, order_id: Order.last)
+      end
+   end
+
+   def remove_product_from_order
+   end
+   
+   
+   
+   ### stretch goals ###
+
+   ## utilize vendor model ##
+   ## utilize price model ##
+   ## utilize amount ##
+
+
+   # return amount spent with specific vendor
    def amount_spent_with_vendor(vendor)
    end
 

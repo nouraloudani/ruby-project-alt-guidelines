@@ -8,3 +8,6 @@ user_or_nil = application_instance.login_or_register
 until user_or_nil
     user_or_nil = application_instance.login_or_register
 end
+
+application_instance.user = user_or_nil
+application_instance.main_menu

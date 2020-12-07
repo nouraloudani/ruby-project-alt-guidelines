@@ -1,5 +1,9 @@
 
-
+User.destroy_all
+Vendor.destroy_all
+Product.destroy_all
+Order.destroy_all
+OrderProduct.destroy_all
 
 ### USER ###
 
@@ -8,7 +12,6 @@ mark = User.create(username: "Marky", password: "abc1234")
 kate = User.create(username: "Katie10", password: "abc12345")
 jon = User.create(username: "Jonny", password: "abc123456")
 sarah = User.create(username: "Sarah20", password: "abc1234567")
-
 
 
 ### VENDOR ###
@@ -44,5 +47,3 @@ end
 3.times do 
     OrderProduct.create(product_id: desk.id, order_id: order3.id)
 end
-
-# binding.pry

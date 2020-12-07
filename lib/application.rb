@@ -27,18 +27,12 @@ class Application
         User.register_a_user 
     end
 
-    def pending_orders
-        orders.find_or_create_by(completed: false)
-    end
-
     def main_menu
         user.reload
         
         system 'clear'
 
         prompt.select("Welcome, #{user.username}! What would you like to do?") do |menu|
-            # create order (create)
-            menu.choice "Create an order", -> {add_order}
             # view orders (read)
             menu.choice "View past orders", -> {past}
             menu.choice "View pending order", -> {pending}
@@ -50,12 +44,6 @@ class Application
         end
     end
 
-    # creates an order for the specific item entered by the user
-    def add_order
-        user.create_order
-        main_menu
-    end
-
     # returns array of orders where attribute 'completed' = true
     def past
         puts user.past_orders
@@ -65,19 +53,15 @@ class Application
 
     # returns array of orders where attribute 'completed' = false
     def pending
-        puts user.pending_order
+        user.pending_order.order_products.each do |op|
+            puts "#{op.id} #{op.product.name}"
+        end
         
-        if user.pending_order.length > 0
-            prompt.select("Place your order?") do |menu|
-                menu.choice "Complete", -> {complete}
-                # remove order (destroy)
-                menu.choice "Cancel", -> {cancel}
-                menu.choice "Main menu", -> {main_menu}
-            end
-        else
-            puts "You currently have no pending orders."
-            sleep 5
-            main_menu
+        prompt.select("Place your order?") do |menu|
+            menu.choice "Complete", -> {complete}
+            # remove order (destroy)
+            menu.choice "Cancel", -> {cancel}
+            menu.choice "Main menu", -> {main_menu}
         end
 
     end
@@ -100,16 +84,15 @@ class Application
         main_menu
     end
 
-    def cancel
+    def cancel 
         user.cancel_order
         puts "Your order has been canceled!"
         sleep 7
-        main_menu
+        mainn_menu
     end
 
     def add_product
         user.add_product_to_order
-        puts "Product has been added"
         sleep 5
         main_menu
     end

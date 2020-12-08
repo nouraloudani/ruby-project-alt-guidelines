@@ -58,9 +58,9 @@ class Application
         end
         
         prompt.select("Place your order?") do |menu|
-            menu.choice "Complete", -> {complete}
+            menu.choice "Complete order?", -> {complete}
             # remove order (destroy)
-            menu.choice "Cancel", -> {cancel}
+            menu.choice "Cancel order?", -> {cancel}
             menu.choice "Main menu", -> {main_menu}
         end
 
@@ -88,9 +88,10 @@ class Application
         user.cancel_order
         puts "Your order has been canceled!"
         sleep 7
-        mainn_menu
+        main_menu
     end
 
+    # add product / create order (create)
     def add_product
         result = user.add_product_to_order
         sleep 5
@@ -107,8 +108,8 @@ class Application
 
     def remove_product
         user.remove_product_from_order
-        # sleep 5
-        # main_menu
+        sleep 5
+        main_menu
     end
 
 

@@ -68,10 +68,14 @@ class User < ActiveRecord::Base
 
    # returns array of completed Orders
    def past_orders
-      orders.where(completed: true)
+      po = orders.where(completed: true)
+      po.map do |order|
+         "#{order.date} - $#{order.amount}"
+      end
    end
 
-   # returns array of orders where attribute 'completed' = false, add in case there is none.
+   # returns array of orders where attribute 'completed' = false, add in case there is none
+   # ensures that there will be a pending order when method is run, if one does not exist - one will be created
    def pending_order
       orders.find_or_create_by(completed: false)
    end
@@ -81,8 +85,9 @@ class User < ActiveRecord::Base
       past_orders.sum(:amount)/past_orders.size
    end
 
-   def add_product_to_order #add product order with a new product id.
-      puts "Please see below a list of our available products"
+   # add product order with a new product id
+   def add_product_to_order
+      puts "Please see below a list of our available products:"
       all_products = Product.all.map do |prod|
          puts prod.name
          prod.name
@@ -93,7 +98,7 @@ class User < ActiveRecord::Base
       if all_products.include? prod_input
          product_inst = Product.find_by(name: prod_input)
          product_inst_id = product_inst.id
-         OrderProduct.create(product_id: product_inst_id, order_id: pending_order.id)
+         OrderProduct.create(product_id: product_inst_id, order_id: self.pending_order.id)
          puts "Product has been added"
          return true
       else
@@ -104,13 +109,38 @@ class User < ActiveRecord::Base
 
    end
 
-   def remove_product_from_order #important to remove a product from a specific order
+   # important to remove a product from a specific order
+   def remove_product_from_order
+      # first prompt user with products
       puts "Your pending products:"
-    # first prompt user with products
-      self.pending_order.id
-      ord_prod = OrderProduct.select do |op|
-         op.order_id = self.pending_order.id
+
+      # displaying products within order
+      products = self.pending_order.order_products.map do |op|
+         Product.where(id: op.product_id)
       end
+
+      prod_name = products.map do |prod|
+         prod[0].name
+      end
+      puts prod_name
+      puts "Please enter the name of the product you wish to remove:"
+      input = gets.chomp
+      prod_instance = Product.find_by(name: input)
+      prod_instance_id = prod_instance.id
+      op_to_destroy = OrderProduct.find_by(product_id: prod_instance_id, order_id: pending_order.id)
+      op_to_destroy.destroy
+      puts "Product has been removed from your order!"
+
+
+
+      
+      
+      # self.pending_order.id
+      # ord_prod = OrderProduct.select do |op|
+      #    op.order_id = self.pending_order.id
+      # end
+
+   ### how are we removing the product from Order ###   
    
    # if ord_prod.length > 0 
    #    ord_prod.map do |op|   
@@ -138,13 +168,21 @@ class User < ActiveRecord::Base
    ### stretch goals ###
 
    ## utilize vendor model ##
-   ## utilize price model ##
-   ## utilize amount ##
+   def display_all_vendors
+   end
 
 
    # return amount spent with specific vendor
    def amount_spent_with_vendor(vendor)
    end
+
+
+   ## utilize price model ##
+   def display_products_and_prices
+   end
+
+
+   ## utilize amount ##
 
 
 end

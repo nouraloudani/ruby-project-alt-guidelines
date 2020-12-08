@@ -13,8 +13,8 @@ class Application
 
     def login_or_register
         prompt.select("Would you like to register or login?") do |menu|
-            menu.choice "Register", -> {register_helper()}
-            menu.choice "Login", -> {login_helper()}
+            menu.choice "Register", -> {register_helper}
+            menu.choice "Login", -> {login_helper}
         end
     end
 
@@ -92,14 +92,23 @@ class Application
     end
 
     def add_product
-        user.add_product_to_order
+        result = user.add_product_to_order
         sleep 5
-        main_menu
+        if result
+            main_menu
+        else 
+            prompt.select("Would you like to try again?") do |menu|
+                menu.choice "Try again", -> {add_product}
+                menu.choice "Main menu", -> {main_menu}
+            end
+        end
     end
 
 
     def remove_product
         user.remove_product_from_order
+        # sleep 5
+        # main_menu
     end
 
 

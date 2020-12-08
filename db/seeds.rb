@@ -28,6 +28,7 @@ order2 = Order.create(user_id: kate.id, date: "May 1", completed: true)
 order3 = Order.create(user_id: sarah.id, date: "Jan 1", completed: false)
 order4 = Order.create(user_id: bill.id, date: "July 3", amount: 300, completed: true)
 order5 = Order.create(user_id: mark.id, date: "March 3", completed: true)
+order6 = Order.create(user_id: sarah.id, date: "Jan 1", completed: false)
 
 
 ### PRODUCT ###
@@ -39,7 +40,7 @@ milk = Product.create(name: "Milk 1L", vendor_id: fresh.id, price: rand(5))
 
 
 ### ORDER_PRODUCT ###
-
+OrderProduct.create(product_id:  Product.all.sample.id, order_id: order6.id)
 2.times do 
     OrderProduct.create(product_id: Product.all.sample.id, order_id: order1.id)
 end

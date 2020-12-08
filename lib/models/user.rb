@@ -71,7 +71,7 @@ class User < ActiveRecord::Base
       orders.where(completed: true)
    end
 
-   # returns array of orders where attribute 'completed' = false
+   # returns array of orders where attribute 'completed' = false, add in case there is none.
    def pending_order
       orders.find_or_create_by(completed: false)
    end
@@ -85,24 +85,52 @@ class User < ActiveRecord::Base
       puts "Please see below a list of our available products"
       all_products = Product.all.map do |prod|
          puts prod.name
+         prod.name
       end 
-      puts "What product would you like to add? Please enter with correct capitalization."
+      puts "What product would you like to add?"
       prod_input = gets.chomp
-      if prod_input == Product.where(name: prod_input)[0].name
-         return product_inst = Product.find_by(name: prod_input)
-               product_inst_id = product_inst.id
-               OrderProduct.create(product_id: product_inst_id, order_id: pending_order.id)
+
+      if all_products.include? prod_input
+         product_inst = Product.find_by(name: prod_input)
+         product_inst_id = product_inst.id
+         OrderProduct.create(product_id: product_inst_id, order_id: pending_order.id)
          puts "Product has been added"
+         return true
       else
          puts "You mistyped, please try again."
-
+         return false
       end
 
 
    end
 
    def remove_product_from_order #important to remove a product from a specific order
-      
+      puts "Your pending products:"
+    # first prompt user with products
+      self.pending_order.id
+      ord_prod = OrderProduct.select do |op|
+         op.order_id = self.pending_order.id
+      end
+   
+   # if ord_prod.length > 0 
+   #    ord_prod.map do |op|   
+   #       product = Product.all.find do |p|
+   #          p.id = op.product_id
+   #       end
+   #       puts "#{product.id} #{product.name}"
+   #    end
+   #    puts "Which product would like to delete? Please enter the corresponding id:"
+   #    answer_product_id = gets.chomp
+   #    if ord_prod.product_id == answer_product_id
+   #          ord_prod.find_by(product_id: answer_product_id).destroy
+   #             puts "Product has been removed"
+   #    else
+   #       puts "Please enter a valid product id."
+   #    end
+   # else
+   #    puts "You don't have any pending products."
+   # end
+
    end
    
    

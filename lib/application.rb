@@ -22,7 +22,6 @@ class Application
         User.login_a_user
     end
 
-    #added register helper and link it to the user's class method
     def register_helper
         User.register_a_user 
     end
@@ -54,7 +53,9 @@ class Application
     # returns array of orders where attribute 'completed' = false
     def pending
         user.pending_order.order_products.each do |op|
-            puts "#{op.id} #{op.product.name}"
+            puts "Product ID: #{op.id}"
+            puts "Product: #{op.product.name}"
+            puts "Price: $#{op.product.price}"
         end
         
         prompt.select("Place your order?") do |menu|
@@ -73,10 +74,12 @@ class Application
         main_menu
     end
 
+    # exit the app
     def exit_app
         puts "See you next time!"
     end
 
+    # complete order
     def complete
         user.complete_order
         puts "Your order has been placed!"
@@ -84,6 +87,7 @@ class Application
         main_menu
     end
 
+    # cancel order (destroy)
     def cancel 
         user.cancel_order
         puts "Your order has been canceled!"
@@ -105,7 +109,7 @@ class Application
         end
     end
 
-
+    # remove product from order
     def remove_product
         user.remove_product_from_order
         sleep 5
